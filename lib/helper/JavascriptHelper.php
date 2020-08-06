@@ -340,7 +340,6 @@
    */
   function update_element_function($element_id, $options = array())
   {
-    //sfContext::getInstance()->getResponse()->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype');
     sfContext::getInstance()->getResponse()->addJavascript('//ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js');
 
     $content = escape_javascript(isset($options['content']) ? $options['content'] : '');
@@ -398,7 +397,6 @@
    */
   function remote_function($options)
   {
-    //sfContext::getInstance()->getResponse()->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype');
     sfContext::getInstance()->getResponse()->addJavascript('//ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js');
 
     $javascript_options = _options_for_ajax($options);
@@ -478,7 +476,6 @@
    */
   function observe_field($field_id, $options = array())
   {
-    //sfContext::getInstance()->getResponse()->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype');
     sfContext::getInstance()->getResponse()->addJavascript('//ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js');
 
     if (isset($options['frequency']) && $options['frequency'] > 0)
@@ -499,7 +496,6 @@
    */
   function observe_form($form_id, $options = array())
   {
-    //sfContext::getInstance()->getResponse()->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype');
     sfContext::getInstance()->getResponse()->addJavascript('//ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js');
 
     if (isset($options['frequency']) && $options['frequency'] > 0)

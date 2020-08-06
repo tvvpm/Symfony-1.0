@@ -75,7 +75,6 @@ class UnixFileSystem extends FileSystem {
         // Resolve home directories. We assume /home is where all home
         // directories reside, b/c there is no other way to do this with
         // PHP AFAIK.
-        //PHP7.4 Arrays {} to []
         if ($strPathname[0] === "~") {
             if ($strPathname[1] === "/") { // like ~/foo => /home/user/foo
                 $strPathname = "/home/" . get_current_user() . substr($strPathname, 1);
@@ -89,7 +88,6 @@ class UnixFileSystem extends FileSystem {
         $n = strlen($strPathname);
         $prevChar = 0;
         for ($i=0; $i < $n; $i++) {
-            //PHP7.4 Arrays {} to []
             $c = $strPathname[$i];
             if (($prevChar === '/') && ($c === '/')) {
                 return self::normalizer($strPathname, $n, $i - 1);
@@ -111,7 +109,6 @@ class UnixFileSystem extends FileSystem {
             return $pathname;
         }
         $n = (int) $len;
-        //PHP7.4 Arrays {} to []
         while (($n > 0) && ($pathname[$n-1] === '/')) {
             $n--;
         }
@@ -125,7 +122,6 @@ class UnixFileSystem extends FileSystem {
         }
         $prevChar = 0;
         for ($i = $offset; $i < $n; $i++) {
-            //PHP7.4 Arrays {} to []
             $c = $pathname[$i];
             if (($prevChar === '/') && ($c === '/')) {
                 continue;
@@ -144,7 +140,6 @@ class UnixFileSystem extends FileSystem {
         if (strlen($pathname === 0)) {
             return 0;
         }
-        //PHP7.4 Arrays {} to []
         return (($pathname[0] === '/') ? 1 : 0);
     }
 
@@ -159,7 +154,6 @@ class UnixFileSystem extends FileSystem {
             return $parent;
         }
 
-        //PHP7.4 Arrays {} to []
         if ($child[0] === '/') {
             if ($parent === '/') {
                 return $child;
@@ -197,11 +191,9 @@ class UnixFileSystem extends FileSystem {
     /* -- most of the following is mapped to the php natives wrapped by FileSystem */    
 
     /* -- Attribute accessors -- */
-    /*function getBooleanAttributes(&$f) { Tomeu: 2016-08-25. La declaración da error de Strict Standard */
     function getBooleanAttributes($f = null) {
         //$rv = getBooleanAttributes0($f);
         $name = $f->getName();
-        //PHP7.4 Arrays {} to []
         $hidden = (strlen($name) > 0) && ($name[0] == '.');
         return ($hidden ? $this->BA_HIDDEN : 0);
     }

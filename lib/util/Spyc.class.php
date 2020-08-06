@@ -987,16 +987,16 @@ class Spyc
     if (!is_array($arr1))
     {
       $arr1 = array();
+      if (!is_array($arr2)) return array(); else return $arr2;
     }
     if (!is_array($arr2))
     {
+      return $arr1;
       $arr2 = array();
     }
 
     $keys  = array_merge(array_keys($arr1), array_keys($arr2));
     $vals  = array_merge(array_values($arr1), array_values($arr2));
-//echo date('r'), '<pre>'; print_r($keys); print_r($vals); echo '</pre>';
-
     $ret   = array();
     foreach ($keys as $key)
     {
@@ -1010,7 +1010,7 @@ class Spyc
         $ret[$key] = $val;
       }
     }
-//echo date('r'), '<pre>', print_r($ret), '</pre>';
+
     return $ret;
   }
 }

@@ -180,7 +180,6 @@ class XmlToAppData extends AbstractHandler {
 							$this->isForReferenceOnly = ($isForRefOnly !== null ? (strtolower($isForRefOnly) === "true") : true); // defaults to TRUE
 						}
 
-                                                //PHP7.4 Tomeu
 						if ($xmlFile[0] != '/') {
 							$f = new PhingFile($this->currentXmlFile);
 							$xf = new PhingFile($f->getParent(), $xmlFile);

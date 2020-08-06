@@ -141,7 +141,6 @@ class CVSPassTask extends Task {
     private final function mangle($password){
         $buf = "";
         for ($i = 0, $plen = strlen($password); $i < $plen; $i++) {
-            //PHP7.4 Arrays {} to []
             $buf .= chr(self::$shifts[ord($password[$i])]);
         }
         return $buf;

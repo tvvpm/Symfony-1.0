@@ -225,7 +225,6 @@ class sfDateTimeFormatInfo
    *
    * @return array narrow day names
    */
-  //Tomeu. Si no existe narrow, devolvemos abbreviated. Por ejemplo en catalan
   function getNarrowDayNames()
   {
     if (array_key_exists('narrow', $this->data['dayNames']['format']))

@@ -428,7 +428,6 @@ function _encodeText($text)
 
   for ($i = 0; $i < strlen($text); $i++)
   {
-    //TOMEU PHP7.4 $char = $text{$i};
     $char = $text[$i];
     $r = rand(0, 100);
 

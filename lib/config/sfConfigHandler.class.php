@@ -65,8 +65,6 @@ abstract class sfConfigHandler
   {
     if (is_array($value))
     {
-      //PHP7.2 deprecated create_function
-      //array_walk_recursive($value, create_function('&$value', '$value = sfToolkit::replaceConstants($value);'));
       array_walk_recursive($value, function(&$value) { $value=sfToolkit::replaceConstants($value); } );
     }
     else

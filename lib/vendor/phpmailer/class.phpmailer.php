@@ -1172,12 +1172,9 @@ class PHPMailer
             $this->SetError($this->Lang("file_open") . $path);
             return "";
         }
-        //$magic_quotes = get_magic_quotes_runtime();
-        //set_magic_quotes_runtime(0);
         $file_buffer = fread($fd, filesize($path));
         $file_buffer = $this->EncodeString($file_buffer, $encoding);
         fclose($fd);
-        //set_magic_quotes_runtime($magic_quotes);
 
         return $file_buffer;
     }
@@ -1286,35 +1283,6 @@ class PHPMailer
 
         // Maximum line length of 76 characters before CRLF (74 + space + '=')
         $encoded = $this->WrapText($encoded, 74, true);
-
-        return $encoded;
-    }
-
-    /**
-     * Encode string to q encoding.  
-     * @access private
-     * @return string
-     */
-    function OLD_EncodeQ ($str, $position = "text") {
-        // There should not be any EOL in the string
-        $encoded = preg_replace("[\r\n]", "", $str);
-
-        switch (strtolower($position)) {
-          case "phrase":
-            $encoded = preg_replace("/([^A-Za-z0-9!*+\/ -])/e", "'='.sprintf('%02X', ord('\\1'))", $encoded);
-            break;
-          case "comment":
-            $encoded = preg_replace("/([\(\)\"])/e", "'='.sprintf('%02X', ord('\\1'))", $encoded);
-          case "text":
-          default:
-            // Replace every high ascii, control =, ? and _ characters
-            $encoded = preg_replace('/([\000-\011\013\014\016-\037\075\077\137\177-\377])/e',
-                  "'='.sprintf('%02X', ord('\\1'))", $encoded);
-            break;
-        }
-        
-        // Replace every spaces to _ (more readable than =20)
-        $encoded = str_replace(" ", "_", $encoded);
 
         return $encoded;
     }

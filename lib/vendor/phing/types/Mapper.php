@@ -134,8 +134,6 @@ class Mapper extends DataType {
      *
      * You must not set any other attribute if you make it a reference.
      */
-    //PHP 7.2
-    //function setRefid($r) {
     function setRefid(Reference $r) {
         if ($this->type !== null || $this->from !== null || $this->to !== null) {
             throw DataType::tooManyAttributes();

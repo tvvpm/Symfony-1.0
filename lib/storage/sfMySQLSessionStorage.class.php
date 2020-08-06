@@ -90,9 +90,9 @@ class sfMySQLSessionStorage extends sfSessionStorage
   /**
    * Destroys a session.
    *
-   * @param  string $id  A session ID
+   * @param string A session ID
    *
-   * @return bool true, if the session was destroyed, otherwise an exception is thrown
+   * @return boolean true, if the session was destroyed, otherwise an exception is thrown
    *
    * @throws <b>sfDatabaseException</b> If the session cannot be destroyed.
    */
@@ -106,7 +106,7 @@ class sfMySQLSessionStorage extends sfSessionStorage
     $id = mysql_real_escape_string($id, $this->resource);
 
     // delete the record associated with this id
-    $sql = "DELETE FROM $db_table WHERE $db_id_col = '$id'";
+    $sql = 'DELETE FROM '.$db_table.' WHERE '.$db_id_col.' = \''.$id.'\'';
 
     if (@mysql_query($sql, $this->resource))
     {
@@ -123,9 +123,9 @@ class sfMySQLSessionStorage extends sfSessionStorage
   /**
    * Cleans up old sessions.
    *
-   * @param  int $lifetime  The lifetime of a session in seconds
+   * @param int The lifetime of a session in seconds
    *
-   * @return bool true, if old sessions have been cleaned, otherwise an exception is thrown
+   * @return boolean true, if old sessions have been cleaned, otherwise an exception is thrown
    *
    * @throws <b>sfDatabaseException</b> If any old sessions cannot be cleaned
    */
@@ -135,9 +135,10 @@ class sfMySQLSessionStorage extends sfSessionStorage
     $db_table    = $this->getParameterHolder()->get('db_table');
     $db_time_col = $this->getParameterHolder()->get('db_time_col', 'sess_time');
 
-    // delete the record older than the authorised session life time older than the authorised session life time
+    // delete the record older than the authorised session life time
     $lifetime = mysql_real_escape_string($lifetime); // We never know...
-    $sql = "DELETE FROM $db_table WHERE $db_time_col + $lifetime < UNIX_TIMESTAMP()";
+    $sql = 'DELETE FROM '.$db_table.' '.
+           'WHERE '.$db_time_col.' + INTERVAL '.$lifetime.' SECOND < NOW()';
 
     if (@mysql_query($sql, $this->resource))
     {
@@ -195,7 +196,9 @@ class sfMySQLSessionStorage extends sfSessionStorage
     $id = mysql_real_escape_string($id, $this->resource);
 
     // get the record associated with this id
-    $sql = "SELECT $db_data_col FROM $db_table WHERE $db_id_col = '$id'";
+    $sql = 'SELECT '.$db_data_col.' ' .
+           'FROM '.$db_table.' ' .
+           'WHERE '.$db_id_col.' = \''.$id.'\'';
 
     $result = @mysql_query($sql, $this->resource);
 
@@ -209,7 +212,10 @@ class sfMySQLSessionStorage extends sfSessionStorage
     else
     {
       // session does not exist, create it
-      $sql = "INSERT INTO $db_table ($db_id_col, $db_data_col, $db_time_col) VALUES ('$id', '', UNIX_TIMESTAMP())";
+      $sql = 'INSERT INTO '.$db_table.' ('.$db_id_col.', ' .
+             $db_data_col.', '.$db_time_col.') VALUES (' .
+             '\''.$id.'\', \'\', NOW())';
+
       if (@mysql_query($sql, $this->resource))
       {
         return '';
@@ -226,10 +232,10 @@ class sfMySQLSessionStorage extends sfSessionStorage
   /**
    * Writes session data.
    *
-   * @param  string $id    A session ID
-   * @param  string $data  A serialized chunk of session data
+   * @param string A session ID
+   * @param string A serialized chunk of session data
    *
-   * @return bool true, if the session was written, otherwise an exception is thrown
+   * @return boolean true, if the session was written, otherwise an exception is thrown
    *
    * @throws <b>sfDatabaseException</b> If the session data cannot be written
    */
@@ -246,7 +252,10 @@ class sfMySQLSessionStorage extends sfSessionStorage
     $data = mysql_real_escape_string($data, $this->resource);
 
     // update the record associated with this id
-    $sql = "UPDATE $db_table SET $db_data_col='$data', $db_time_col=UNIX_TIMESTAMP() WHERE $db_id_col='$id'";
+    $sql = 'UPDATE '.$db_table.' ' .
+           'SET '.$db_data_col.' = \''.$data.'\', ' .
+           $db_time_col.' = NOW() ' .
+           'WHERE '.$db_id_col.' = \''.$id.'\'';
 
     if (@mysql_query($sql, $this->resource))
     {

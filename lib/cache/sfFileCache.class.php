@@ -263,7 +263,6 @@ class sfFileCache extends sfCache
   {
     list($path, $file) = $this->getFileName($id, $namespace);
 
-
     if ($doNotTestCacheValidity)
     {
       if (file_exists($path.$file))
@@ -374,7 +373,6 @@ class sfFileCache extends sfCache
   *
   * @return array An array containing the path and the file name
   */
-  //Tomeu 02/12/2019 de public a protected
   protected function getFileName($id, $namespace)
   {
     $file = ($this->fileNameProtection) ? md5($id).$this->suffix : $id.$this->suffix;
@@ -485,16 +483,12 @@ class sfFileCache extends sfCache
     {
       clearstatcache(); // because the filesize can be cached by PHP itself...
       $length = @filesize($path.$file);
-      //Tomeu: Eliminamos magic_quotes_runtime por deprecated en 5.3.3
-      //$mqr = get_magic_quotes_runtime();
-      //set_magic_quotes_runtime(0);
       if ($this->readControl)
       {
         $hashControl = @fread($fp, 32);
         $length = $length - 32;
       }
       $data = ($length) ? @fread($fp, $length) : '';
-      //set_magic_quotes_runtime($mqr);
       if ($this->fileLocking)
       {
         @flock($fp, LOCK_UN);

@@ -119,7 +119,6 @@ function object_select_tag($object, $method, $options = array(), $default_value 
 
   $text_method = _get_option($options, 'text_method');
 
-  //Tomeu. Añadida la opcion de optgroup
   $optgroup_method = _get_option($options, 'optgroup_method');
 
   $select_options = _get_options_from_objects(sfContext::getInstance()->retrieveObjects($related_class, $peer_method), $text_method, $optgroup_method);
@@ -151,7 +150,6 @@ function object_select_tag($object, $method, $options = array(), $default_value 
   return select_tag(_convert_method_to_name($method, $options), $option_tags, $options);
 }
 
-//Tomeu. Añadida la opcion de optgroup
 function _get_options_from_objects($objects, $text_method = null, $optgroup_method=null)
 {
   $select_options = array();
@@ -183,14 +181,14 @@ function _get_options_from_objects($objects, $text_method = null, $optgroup_meth
 
       $key   = $multi_primary_keys ? implode('/', $tmp_object->getPrimaryKey()) : $tmp_object->getPrimaryKey();
       $value = $tmp_object->$methodToCall();
-//Tomeu. Añadida la opcion de optgroup
-if ($optgroup_method)
-{
-      $group = $tmp_object->$optgroup_method();
-      $select_options[$group->__toString()][$key] = $value;
-}
-else
-      $select_options[$key] = $value;
+
+      if ($optgroup_method)
+      {
+        $group = $tmp_object->$optgroup_method();
+        $select_options[$group->__toString()][$key] = $value;
+      }
+      else
+        $select_options[$key] = $value;
     }
   }
 

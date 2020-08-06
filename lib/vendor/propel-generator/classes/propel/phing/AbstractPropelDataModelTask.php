@@ -369,7 +369,6 @@ abstract class AbstractPropelDataModelTask extends Task {
 		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
 		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
 		$lastdotpos = strrpos($classpath, '.');
-		//TOMEU PHP7.4 if ($lastdotpos) $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
 		if ($lastdotpos) $classpath[$lastdotpos+1] = strtoupper($classpath[$lastdotpos+1]);
 		else ucfirst($classpath);
 
@@ -414,12 +413,10 @@ abstract class AbstractPropelDataModelTask extends Task {
 						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", PROJECT_MSG_ERR);
 					} else {
 						// normalize the document using normalizer stylesheet
-						//PHP5.6 ... Cargamos los estilos en un DomDocument.
 						$xslDom = new DomDocument();
 						$xslDom->load($this->xslFile->getAbsolutePath());
 
 						$xsl = new XsltProcessor();
-						//MOD php5.6$xsl->importStyleSheet(DomDocument::load($this->xslFile->getAbsolutePath()));
 						$xsl->importStyleSheet($xslDom);
 						$transformed = $xsl->transformToDoc($dom);
 						$newXmlFilename = substr($xmlFile->getName(), 0, strrpos($xmlFile->getName(), '.')) . '-transformed.xml';

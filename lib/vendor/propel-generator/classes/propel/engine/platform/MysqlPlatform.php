@@ -92,7 +92,6 @@ class MysqlPlatform extends DefaultPlatform {
 	 * @return     string
 	 */
 	public function escapeText($text) {
-                //PHP7.4 a real_escape
 		return mysql_real_escape_string($text);
 	}
 

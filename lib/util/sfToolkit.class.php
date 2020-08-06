@@ -350,11 +350,9 @@ class sfToolkit
    *
    * @param string the value to perform the replacement on
    * @return string the value with substitutions made
-   * TOMEU PHP 7.2
    */
   public static function replaceConstants($value)
   {
-    //return is_string($value) ? preg_replace_callback('/%(.+?)%/', create_function('$v', 'return sfConfig::has(strtolower($v[1])) ? sfConfig::get(strtolower($v[1])) : "%{$v[1]}%";'), $value) : $value;
     return is_string($value) ? preg_replace_callback('/%(.+?)%/', function($v) { return sfConfig::has(strtolower($v[1])) ? sfConfig::get(strtolower($v[1])) : "%{$v[1]}%";}, $value) : $value;
   }
 

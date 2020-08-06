@@ -412,9 +412,7 @@ class PropertyTask extends Task {
             if ($pos === (strlen($value) - 1)) {
                 array_push($fragments, '$');
                 $prev = $pos + 1;
-            }
-            //PHP7.4 Array de {} a []
-            elseif ($value[$pos+1] !== '{' ) {
+            } elseif ($value[$pos+1] !== '{' ) {
 
                 // the string positions were changed to value-1 to correct
                 // a fatal error coming from function substring()

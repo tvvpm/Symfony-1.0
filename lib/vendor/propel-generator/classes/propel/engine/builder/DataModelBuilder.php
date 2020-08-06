@@ -91,7 +91,6 @@ abstract class DataModelBuilder {
 		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
 		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
 		$lastdotpos = strrpos($classpath, '.');
-                //PHP7.4 Array {} a []
 		if ($lastdotpos) $classpath[$lastdotpos+1] = strtoupper($classpath[$lastdotpos+1]);
 		else ucfirst($classpath);
 

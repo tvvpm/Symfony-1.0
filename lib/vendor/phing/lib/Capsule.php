@@ -183,10 +183,8 @@ class Capsule {
      * @return string "Best guess" path for this file.
      */
     protected function resolvePath($file, $basepath) {
-        //PHP7.4 Arrays {} to []
         if ( !($file[0] == DIRECTORY_SEPARATOR || $file[0] == '/')
             // also account for C:\ style path
-            //PHP7.4 Arrays {} to []
                 && !($file[1] == ':' && ($file[2] ==  DIRECTORY_SEPARATOR || $file[2] == '/'))) { 
             if ($basepath != null) {
                 $file = $basepath . DIRECTORY_SEPARATOR . $file;
