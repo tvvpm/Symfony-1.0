@@ -105,7 +105,7 @@ function link_to($name = '', $internal_uri = '', $options = array())
 
   $html_options['href'] = url_for($internal_uri, $absolute);
 
-  if (isset($html_options['query_string']))
+  if (isset($html_options['query_string']) and ($html_options['query_string']!=''))
   {
     $html_options['href'] .= '?'.$html_options['query_string'];
     unset($html_options['query_string']);
