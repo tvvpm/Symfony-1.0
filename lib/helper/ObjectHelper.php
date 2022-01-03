@@ -69,6 +69,12 @@ function object_textarea_tag($object, $method, $options = array(), $default_valu
 function objects_for_select($options = array(), $value_method, $text_method = null, $selected = null, $html_options = array())
 {
   $select_options = array();
+
+  if (is_array($html_options) and array_key_exists('optgroup_method', $html_options))
+    $optgroup_method=$html_options['optgroup_method'];
+  else
+    $optgroup_method=false;
+
   foreach ($options as $option)
   {
     // text method exists?
@@ -85,10 +91,21 @@ function objects_for_select($options = array(), $value_method, $text_method = nu
       throw new sfViewException($error);
     }
 
+    if ($optgroup_method and (!is_callable(array($option, $optgroup_method))))
+    {
+      $error = sprintf('Method "%s" doesn\'t exist for object of class "%s"', $value_method, _get_class_decorated($option));
+      throw new sfViewException($error);
+    }
+
     $value = $option->$value_method();
     $key = ($text_method != null) ? $option->$text_method() : $value;
-
-    $select_options[$value] = $key;
+    if ($optgroup_method)
+    {
+      $optgroup_value=$option->$optgroup_method()? $option->$optgroup_method()->__toString():'Sin grupo';
+      $select_options[$optgroup_value][$value] = $key;
+    }
+    else
+      $select_options[$value] = $key;
   }
 
   return options_for_select($select_options, $selected, $html_options);
