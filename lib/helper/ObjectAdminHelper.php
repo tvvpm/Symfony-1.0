@@ -47,6 +47,82 @@ function object_admin_input_file_tag($object, $method, $options = array())
   return input_file_tag($name, $options)."\n<br />".$html;
 }
 
+
+function admin_double_list($name, $options, $custom_objects=array(), $objects_associated=array())
+{
+  $options = _parse_attributes($options);
+  $options['multiple']=true;
+  $options['class']='sf_admin_multiple';
+  if (!isset($options['size']))
+  {
+    $options['size'] = 10;
+  }
+  $label_all   = __(isset($options['unassociated_label']) ? $options['unassociated_label'] : 'Unassociated');
+  $label_assoc = __(isset($options['associated_label'])   ? $options['associated_label']   : 'Associated');
+
+  $through_class = _get_option($options, 'through_class');
+  $associated_ids = array(); //array_map(function($o) { return $o->getPrimaryKey();}, $objects_associated);
+
+  $objects_unassociated = array();
+  foreach ($custom_objects as $object)
+  {
+    if (!in_array($object->getPrimaryKey(), $associated_ids))
+    {
+      $objects_unassociated[] = $object;
+    }
+  }
+
+  // remove non html option
+  unset($options['through_class']);
+  // override field name
+  unset($options['control_name']);
+  $name1 = 'unassociated_'.$name;
+  $name2 = 'associated_'.$name;
+  $select1 = select_tag($name1, options_for_select(_get_options_from_objects($objects_unassociated), '', $options), $options);
+  $options['class'] = 'sf_admin_multiple-selected';
+  $select2 = select_tag($name2, options_for_select(_get_options_from_objects($objects_associated), '', $options), $options);
+
+  $html =
+'<div>
+  <div style="float: left">
+    <div style="font-weight: bold; padding-bottom: 0.5em">%s</div>
+    %s
+  </div>
+  <div style="float: left">
+    %s<br />
+    %s
+  </div>
+  <div style="float: left">
+    <div style="font-weight: bold; padding-bottom: 0.5em">%s</div>
+    %s
+  </div>
+  <br style="clear: both" />
+</div>
+<script>
+<!--
+	jQuery("#'.$name1.'").dblclick(function() {
+		double_list_move("'. $name1 . '", "'. $name2 . '");
+	});
+	jQuery("#'.$name2.'").dblclick(function() {
+		double_list_move("'. $name2 . '", "'. $name1 . '");
+	});
+-->
+</script>
+';
+
+  $response = sfContext::getInstance()->getResponse();
+  $response->addJavascript(sfConfig::get('sf_admin_web_dir').'/js/double_list.js?v=20210224');
+
+  return sprintf($html,
+    $label_all,
+    $select1,
+    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/next.png', "style=\"border: 0\" onclick=\"double_list_move('{$name1}', '{$name2}'); return false;\""),
+    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/previous.png', "style=\"border: 0\" onclick=\"double_list_move('{$name2}', '{$name1}'); return false;\""),
+    $label_assoc,
+    $select2
+  );
+}
+
 function object_admin_double_list($object, $method, $options = array(), $callback = null)
 {
   $options = _parse_attributes($options);
@@ -99,17 +175,26 @@ function object_admin_double_list($object, $method, $options = array(), $callbac
   </div>
   <br style="clear: both" />
 </div>
+<script>
+<!--
+	jQuery("#'.$name1.'").dblclick(function() {
+		double_list_move("'. $name1 . '", "'. $name2 . '");
+	});
+	jQuery("#'.$name2.'").dblclick(function() {
+		double_list_move("'. $name2 . '", "'. $name1 . '");
+	});
+-->
+</script>
 ';
 
   $response = sfContext::getInstance()->getResponse();
-  $response->addJavascript(sfConfig::get('sf_prototype_web_dir').'/js/prototype');
-  $response->addJavascript(sfConfig::get('sf_admin_web_dir').'/js/double_list');
+  $response->addJavascript(sfConfig::get('sf_admin_web_dir').'/js/double_list.js');
 
   return sprintf($html,
     $label_all,
     $select1,
-    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/next.png', "style=\"border: 0\" onclick=\"double_list_move(\$('{$name1}'), \$('{$name2}')); return false;\""),
-    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/previous.png', "style=\"border: 0\" onclick=\"double_list_move(\$('{$name2}'), \$('{$name1}')); return false;\""),
+    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/next.png', "style=\"border: 0\" onclick=\"double_list_move('{$name1}', '{$name2}'); return false;\""),
+    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/previous.png', "style=\"border: 0\" onclick=\"double_list_move('{$name2}', '{$name1}'); return false;\""),
     $label_assoc,
     $select2
   );
