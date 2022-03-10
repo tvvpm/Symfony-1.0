@@ -228,6 +228,8 @@ class sfMessageFormat
 
     $this->loadCatalogue($catalogue);
 
+    if (is_object($string)) $string = $string->__toString();
+
     foreach ($this->messages[$catalogue] as $variant)
     {
       // we found it, so return the target translation
