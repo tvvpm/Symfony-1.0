@@ -173,7 +173,10 @@ function form_tag($url_for_options = '', $options = array())
 function select_tag($name, $option_tags = null, $options = array())
 {
   $options = _convert_options($options);
-  $id = $name;
+  if (isset($options['id']))
+    $id = $options['id'];
+  else
+    $id = $name;
   if (isset($options['multiple']) && $options['multiple'] && substr($name, -2) !== '[]')
   {
     $name .= '[]';
