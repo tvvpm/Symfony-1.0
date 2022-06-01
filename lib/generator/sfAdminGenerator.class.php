@@ -60,7 +60,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
     $help = $this->getParameterValue($type.'.fields.'.$column->getName().'.help');
     if ($help)
     {
-      return "<div class=\"sf_admin_edit_help\">[?php echo __('".$this->escapeString($help)."') ?]</div>";
+      return "<p class=\"help-block\">[?php echo __('".$this->escapeString($help)."') ?]</p>";
     }
 
     return '';
@@ -84,13 +84,13 @@ abstract class sfAdminGenerator extends sfCrudGenerator
     $only_for = isset($params['only_for']) ? $params['only_for'] : null;
 
     // default values
+    $default_class  = 'btn btn-primary';
     if ($actionName[0] == '_')
     {
       $actionName     = substr($actionName, 1);
       $default_name   = strtr($actionName, '_', ' ');
-      $default_icon   = sfConfig::get('sf_admin_web_dir').'/images/'.$actionName.'_icon.png';
+      $default_icon   = '/images/iconos/'.$actionName.'.png';
       $default_action = $actionName;
-      $default_class  = 'sf_admin_action_'.$actionName;
 
       if ($actionName == 'save' || $actionName == 'save_and_add' || $actionName == 'save_and_list')
       {
@@ -106,7 +106,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
           $options['confirm'] = 'Are you sure?';
         }
 
-        $li_class = 'float-left';
+        //$li_class = 'float-left';
 
         $only_for = 'edit';
       }
@@ -116,8 +116,8 @@ abstract class sfAdminGenerator extends sfCrudGenerator
       $default_name   = strtr($actionName, '_', ' ');
       $default_icon   = sfConfig::get('sf_admin_web_dir').'/images/default_icon.png';
       $default_action = 'List'.sfInflector::camelize($actionName);
-      $default_class  = '';
     }
+    $default_class  .= ' ' . $actionName;
 
     $name   = isset($params['name']) ? $params['name'] : $default_name;
     $icon   = isset($params['icon']) ? sfToolkit::replaceConstants($params['icon']) : $default_icon;
@@ -126,19 +126,21 @@ abstract class sfAdminGenerator extends sfCrudGenerator
 
     if (!isset($options['class']))
     {
-      if ($default_class)
-      {
-        $options['class'] = $default_class;
-      }
-      else
-      {
-        $options['style'] = 'background: #ffc url('.$icon.') no-repeat 3px 2px';
-      }
+      $options['class'] = $default_class;
     }
+    else
+    {
+       //Nos aseguramos que tenemos la clase btn
+      if (strpos(' btn ', ' ' . $options['class'] . ' ' )===false)
+        $options['class'] = "btn ${options['class']}";
+    }
+
+    if (isset($params['icon']))
+      $options['style'] = 'background-image: url("'.$icon.'"); background-position: 5px center; background-repeat:no-repeat; padding-left:25px';
 
     $li_class = $li_class ? ' class="'.$li_class.'"' : '';
 
-    $html = '<li'.$li_class.'>';
+    $html = '<span '.$li_class.'>';
 
     if ($only_for == 'edit')
     {
@@ -155,6 +157,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
 
     if ($method == 'submit_tag')
     {
+      //$html.=	'<button class="btn btn-primary" type="submit">'.$name.'</button>';
       $html .= '[?php echo submit_tag(__(\''.$name.'\'), '.var_export($options, true).') ?]';
     }
     else
@@ -164,7 +167,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
       // little hack
       $phpOptions = preg_replace("/'confirm' => '(.+?)(?<!\\\)'/", '\'confirm\' => __(\'$1\')', $phpOptions);
 
-      $html .= '[?php echo button_to(__(\''.$name.'\'), \''.$this->getModuleName().'/'.$action.$url_params.', '.$phpOptions.') ?]';
+      $html .= '[?php echo link_to(__(\''.$name.'\'), \''.$this->getModuleName().'/'.$action.$url_params.', '.$phpOptions.') ?]';
     }
 
     if ($only_for !== null)
@@ -172,7 +175,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
       $html .= '[?php endif; ?]'."\n";
     }
 
-    $html .= '</li>'."\n";
+    $html .= '</span>'."\n";
 
     return $html;
   }
@@ -189,6 +192,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
   public function getLinkToAction($actionName, $params, $pk_link = false)
   {
     $options = isset($params['params']) ? sfToolkit::stringToArray($params['params']) : array();
+    $span_class='';
 
     // default values
     if ($actionName[0] == '_')
@@ -200,28 +204,35 @@ abstract class sfAdminGenerator extends sfCrudGenerator
 
       if ($actionName == 'delete')
       {
+	$span_class='pull-right';
         $options['post'] = true;
+        $options['class']='btn btn-danger delete';
         if (!isset($options['confirm']))
         {
           $options['confirm'] = 'Are you sure?';
         }
       }
+      else
+        $options['class']='btn btn-primary';
     }
     else
     {
       $name   = isset($params['name']) ? $params['name'] : $actionName;
       $icon   = isset($params['icon']) ? sfToolkit::replaceConstants($params['icon']) : sfConfig::get('sf_admin_web_dir').'/images/default_icon.png';
       $action = isset($params['action']) ? $params['action'] : 'List'.sfInflector::camelize($actionName);
+      $options['class']='btn btn-primary';
     }
 
     $url_params = $pk_link ? '?'.$this->getPrimaryKeyUrlParams() : '\'';
-
     $phpOptions = var_export($options, true);
 
     // little hack
     $phpOptions = preg_replace("/'confirm' => '(.+?)(?<!\\\)'/", '\'confirm\' => __(\'$1\')', $phpOptions);
 
-    return '<li>[?php echo link_to(image_tag(\''.$icon.'\', array(\'alt\' => __(\''.$name.'\'), \'title\' => __(\''.$name.'\'))), \''.$this->getModuleName().'/'.$action.$url_params.($options ? ', '.$phpOptions : '').') ?]</li>'."\n";
+    return '<span class="' . $span_class . '">[?php echo link_to(
+	__(\''.$name.'\'),
+	\''.$this->getModuleName().'/'.$action.$url_params.($options ? ', '.$phpOptions : '').') ?]
+	</span>'."\n";
   }
 
   /**
@@ -689,6 +700,12 @@ EOF;
   {
     return preg_replace('/\'/', '\\\'', $string);
   }
+
+  //TOMEU
+  public function getNameToId($name)
+  {
+    return preg_replace('/[^a-z0-9_]/', '_', strtolower($name));
+  }
 }
 
 /**
@@ -785,4 +802,5 @@ class sfAdminColumn
   {
     return $this->column ? $this->column->$name() : null;
   }
+
 }
