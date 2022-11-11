@@ -552,9 +552,18 @@ class sfWebResponse extends sfResponse
    * @param string Javascript code
    * @param string Directory delimiter
    */
-  public function addJavascript($js, $position = '')
+  public function addJavascript($js, $position = '', $options=array())
   {
-    $this->setParameter($js, $js, 'helper/asset/auto/javascript'.($position ? '/'.$position : ''));
+    $this->setParameter($js, $options, 'helper/asset/auto/javascript'.($position ? '/'.$position : ''));
+  }
+
+  /**
+   * Adds meta to disable ads on current page.
+   *
+   */
+  public function disableAds($meta = 'noads')
+  {
+    $this->addMeta($meta, 1);
   }
 
   /**

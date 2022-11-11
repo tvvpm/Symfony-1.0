@@ -246,13 +246,14 @@ class sfViewConfigHandler extends sfYamlConfigHandler
     // Merge the current view's stylesheets with the app's default stylesheets
     $stylesheets = $this->mergeConfigValue('stylesheets', $viewName);
     $tmp = array();
-    foreach ((array) $stylesheets as $css)
+    foreach ((array) $stylesheets as $key=>$options)
     {
       $position = '';
-      if (is_array($css))
+      $css_options = array();
+      if (is_array($options))
       {
-        $key = key($css);
-        $options = $css[$key];
+        foreach($options as $option)
+          $css_options[key($option)]=current($option);
         if (isset($options['position']))
         {
           $position = $options['position'];
@@ -261,8 +262,7 @@ class sfViewConfigHandler extends sfYamlConfigHandler
       }
       else
       {
-        $key = $css;
-        $options = array();
+        $key = $options;
       }
 
       $key = $this->replaceConstants($key);
@@ -277,7 +277,7 @@ class sfViewConfigHandler extends sfYamlConfigHandler
       }
       else
       {
-        $tmp[$key] = sprintf("  \$response->addStylesheet('%s', '%s', %s);", $key, $position, str_replace("\n", '', var_export($options, true)));
+        $tmp[$key] = sprintf("  \$response->addStylesheet('%s', '%s', %s);", $key, $position, str_replace("\n", '', var_export($css_options, true)));
       }
     }
 
@@ -286,26 +286,31 @@ class sfViewConfigHandler extends sfYamlConfigHandler
     // Populate $javascripts with the values from ONLY the current view
     $javascripts = $this->mergeConfigValue('javascripts', $viewName);
     $tmp = array();
-    foreach ((array) $javascripts as $js)
+
+    foreach ((array) $javascripts as $key=>$options)
     {
       $position = '';
-      if (is_array($js))
+      $js_options=array();
+      if (is_array($options))
       {
-        $key = key($js);
-        $options = $js[$key];
-        if (isset($options['position']))
+        foreach($options as $option)
+          if (is_array($option))
+            $js_options[key($option)]=current($option);
+          else
+            $js_options[$option]='';
+
+        if (isset($js_options['position']))
         {
-          $position = $options['position'];
-          unset($options['position']);
+          $position = $js_options['position'];
+          unset($js_options['position']);
         }
       }
       else
       {
-        $key = $js;
+        $key = $options;
       }
 
       $key = $this->replaceConstants($key);
-
       if ('-*' == $key)
       {
         $tmp = array();
@@ -316,7 +321,7 @@ class sfViewConfigHandler extends sfYamlConfigHandler
       }
       else
       {
-        $tmp[$key] = sprintf("  \$response->addJavascript('%s', '%s');", $key, $position);
+        $tmp[$key] = sprintf("  \$response->addJavascript('%s', '%s', %s);", $key, $position, str_replace("\n", '', var_export($js_options, true)));
       }
     }
 
