@@ -61,26 +61,62 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
   $label_assoc = __(isset($options['associated_label'])   ? $options['associated_label']   : 'Associated');
 
   $through_class = _get_option($options, 'through_class');
-  $associated_ids = array(); //array_map(function($o) { return $o->getPrimaryKey();}, $objects_associated);
-
-  $objects_unassociated = array();
-  foreach ($custom_objects as $object)
+  $associated_ids = array_map(function($o) { return $o->getPrimaryKey();}, $objects_associated);
+  $custom_ids  = array_map(function($o) { return $o->getPrimaryKey();}, $custom_objects);
+  $already_asigned_ids = array();
+  //Buscamos los objetos que estan asociados pero no estan en los diponibles.
+  foreach($associated_ids as $index => $aid)
   {
-    if (!in_array($object->getPrimaryKey(), $associated_ids))
+    if (!in_array($aid, $custom_ids))
     {
-      $objects_unassociated[] = $object;
+      $already_asigned_ids[] = $aid;
+      unset($associated_ids[$index]);
     }
   }
 
+  //Buscamos los objetos no asociados.
+  $objects_unassociated = array();
+  foreach($custom_objects as $index => $object)
+    if (!in_array($object->getPrimaryKey(), $associated_ids))
+      $objects_unassociated[] = $object;
+
+  $already_asigned_objects = array();
+  if (!isset($options['show_already']) or ($options['show_already']))
+    foreach($objects_associated as $index => $object)
+      if (in_array($object->getPrimaryKey(), $already_asigned_ids))
+      {
+        $already_asigned_objects[] = $object;
+        unset($objects_associated[$index]);
+      }
+
+  if (isset($options['hide_unavailiables']))
+    foreach($objects_associated as $index => $object)
+    {
+      if (!in_array($object->getPrimaryKey(), $custom_ids))
+        unset($objects_associated[$index]);
+    }
+
   // remove non html option
   unset($options['through_class']);
+
   // override field name
   unset($options['control_name']);
+
   $name1 = 'unassociated_'.$name;
   $name2 = 'associated_'.$name;
+  $name3 = 'associated_already_'.$name;
   $select1 = select_tag($name1, options_for_select(_get_options_from_objects($objects_unassociated), '', $options), $options);
   $options['class'] = 'sf_admin_multiple-selected';
   $select2 = select_tag($name2, options_for_select(_get_options_from_objects($objects_associated), '', $options), $options);
+
+  if (count($already_asigned_objects)>0)
+    $already_html = sprintf(
+	'<div style="float: left; margin-left: 5px;"><div style="font-weight: bold; padding-bottom: 0.5em">%s</div>%s</div>',
+	__(isset($options['already_label'])) ? $options['already_label']   : 'Already associated',
+	select_tag($name3, options_for_select(_get_options_from_objects($already_asigned_objects), '', $options), array_merge($options, array('disabled'=>'disabled')))
+    );
+  else
+     $already_html ='';
 
   $html =
 '<div>
@@ -96,6 +132,7 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
     <div style="font-weight: bold; padding-bottom: 0.5em">%s</div>
     %s
   </div>
+  %s
   <br style="clear: both" />
 </div>
 <script>
@@ -111,7 +148,7 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
 ';
 
   $response = sfContext::getInstance()->getResponse();
-  $response->addJavascript(sfConfig::get('sf_admin_web_dir').'/js/double_list.js?v=20210224');
+  $response->addJavascript(sfConfig::get('sf_admin_web_dir').'/js/double_list.js');
 
   return sprintf($html,
     $label_all,
@@ -119,7 +156,8 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
     submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/next.png', "style=\"border: 0\" onclick=\"double_list_move('{$name1}', '{$name2}'); return false;\""),
     submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/previous.png', "style=\"border: 0\" onclick=\"double_list_move('{$name2}', '{$name1}'); return false;\""),
     $label_assoc,
-    $select2
+    $select2,
+    $already_html
   );
 }
 
@@ -129,6 +167,8 @@ function object_admin_double_list($object, $method, $options = array(), $callbac
 
   $options['multiple'] = true;
   $options['class'] = 'sf_admin_multiple';
+  if (isset($options['callback'])) $callback = $options['callback'];
+
   if (!isset($options['size']))
   {
     $options['size'] = 10;
