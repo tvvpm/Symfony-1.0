@@ -987,16 +987,17 @@ class Spyc
     if (!is_array($arr1))
     {
       $arr1 = array();
+      //Optimizacion devolvemos el segundo array si es que es un array
       if (!is_array($arr2)) return array(); else return $arr2;
     }
     if (!is_array($arr2))
     {
+      //Optimizacion. Devolvemos el array1
       return $arr1;
-      $arr2 = array();
     }
-
     $keys  = array_merge(array_keys($arr1), array_keys($arr2));
     $vals  = array_merge(array_values($arr1), array_values($arr2));
+/*
     $ret   = array();
     foreach ($keys as $key)
     {
@@ -1009,8 +1010,41 @@ class Spyc
       {
         $ret[$key] = $val;
       }
-    }
+    }*/
+    $ret2 = array_merge($arr1,$arr2);
 
-    return $ret;
+    $ret3=array();
+    reset($vals);
+    foreach ($keys as $key)
+    {
+      $val=current($vals);
+      if (isset($ret[$key]) && is_int($key))
+        $ret3[] = $val;
+      else
+        $ret3[$key] = $val;
+      next($vals);
+    }
+/*if ($ret === $ret2)
+{
+}
+elseif ($ret2 === $ret3)
+{
+}
+else
+{
+echo '<div style="display: flex"><pre>';
+var_dump($ret);
+echo '</pre>';
+echo '<pre>';
+var_dump($ret2);
+echo '</pre>';
+echo '<pre>';
+var_dump($ret3);
+echo '</pre></div>';
+echo 'Comprueba /usr/share/php5/symfony-1.0.21/lib/util/Spyc.class.php .... se da el caso de _array_merge no coincidente.';
+die;
+}*/
+
+    return $ret2;
   }
 }
