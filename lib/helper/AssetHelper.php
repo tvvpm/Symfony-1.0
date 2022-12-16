@@ -497,3 +497,32 @@ function include_stylesheets()
 {
   echo get_stylesheets();
 }
+
+/**
+ * Returns <link> tags for all stuff to be preloaded
+ */
+function get_preloads()
+{
+  $response = sfContext::getInstance()->getResponse();
+  foreach ($response->getPreloads() as $as=>$data)
+  {
+    if (is_array($data))
+    {
+      $data['rel'] = 'preload';
+      $data['as'] ??= 'image';
+      echo tag('link', $data);
+    }
+    else
+      echo tag('link', array('rel' => 'preload', 'as'=>'image', 'href' => $data))."\n";
+  }
+}
+
+/**
+ * Prints <link> tags for all preloads added to the response object.
+ *
+ * @see get_preloads()
+ */
+function include_preloads()
+{
+  echo get_preloads();
+}

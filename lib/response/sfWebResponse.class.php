@@ -558,6 +558,16 @@ class sfWebResponse extends sfResponse
   }
 
   /**
+   * Retrieves preloads from the current web response.
+   *
+   * @return string array of preloads from the current response
+   */
+  public function getPreloads()
+  {
+    return $this->getParameterHolder()->getAll('helper/asset/auto/preload');
+  }
+
+  /**
    * Adds meta to disable ads on current page.
    *
    */
