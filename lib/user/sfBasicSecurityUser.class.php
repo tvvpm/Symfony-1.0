@@ -25,7 +25,7 @@ class sfBasicSecurityUser extends sfUser implements sfSecurityUser
   const CREDENTIAL_NAMESPACE = 'symfony/user/sfUser/credentials';
 
   protected $lastRequest = null;
-
+  protected $priorLastRequest = null;
   protected $credentials = null;
   protected $authenticated = null;
 
@@ -207,6 +207,16 @@ class sfBasicSecurityUser extends sfUser implements sfSecurityUser
     return $this->lastRequest;
   }
 
+  /**
+   * Returns the timestamp of the prior last user request.
+   *
+   * @param  integer
+   */
+  public function getPriorLastRequestTime()
+  {
+    return $this->priorLastRequest;
+  }
+
   public function initialize($context, $parameters = null)
   {
     // initialize parent
@@ -238,6 +248,7 @@ class sfBasicSecurityUser extends sfUser implements sfSecurityUser
       }
     }
 
+    $this->priorLastRequest = $this->lastRequest;
     $this->lastRequest = time();
   }
 
