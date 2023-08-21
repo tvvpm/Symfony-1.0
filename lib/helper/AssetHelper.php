@@ -101,8 +101,15 @@ function javascript_include_tag()
   {
     $options = array('src' => javascript_path($source));
     $options=array_merge($options, $sourceOptions);
+    if (isset($options['body']))
+    {
+      $body = $options['body']; 
+      unset($options['body']);
+    }
+    else 
+      $body = '';
 
-    $html .= content_tag('script', '', $options)."\n";
+    $html .= content_tag('script', $body, $options)."\n";
   }
 
   return $html;
