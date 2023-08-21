@@ -736,21 +736,26 @@ function input_date_tag($name, $value = null, $options = array())
     // educated guess about the size
     $options['size'] = strlen($date_format)+2;
   }
-  $html = '<div class="input-append">'.input_tag($name, $value, $options);
+  $html = '<div class="input-group input-append">'.input_tag($name, $value, $options);
 
-  $html_options=array(
+  $html_options=
+     array(
 	'type'=>'button',
 	'disabled'=>'disabled',
 	'onclick'=>'return false',
-	'class'=>'btn',
+	'class'=>_get_option($options, 'class_button')??'btn',
 	'id'=>$id_calendarButton
-  );
+    );
+
   if ($calendar_button_type == 'img')
   {
     $html_options['style']="background-image: url({$calendar_button}); background-repeat: no-repeat; background-position: center center; overflow: hidden;";
     $calendar_button='&nbsp;';
   }
-  $html .= content_tag('button', $calendar_button, $html_options);
+  $html .= content_tag('div',
+      content_tag('button', $calendar_button, $html_options),
+      array('class'=>'input-group-append')
+  );
 
   if (_get_option($options, 'with_format'))
   {
