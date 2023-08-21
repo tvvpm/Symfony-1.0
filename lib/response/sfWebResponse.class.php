@@ -576,6 +576,11 @@ class sfWebResponse extends sfResponse
     $this->addMeta($meta, 1);
   }
 
+  public function isAdsDisabled($meta = 'noads')
+  {
+    return $this->getParameter($meta, false, 'helper/asset/auto/meta');
+  }
+
   /**
    * Retrieves cookies from the current web response.
    *
