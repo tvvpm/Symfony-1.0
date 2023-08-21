@@ -55,7 +55,6 @@ class sfSessionStorage extends sfStorage
         session_id($sessionId);
       }
     }
-
     $cookieDefaults = session_get_cookie_params();
     $lifetime = $this->getParameter('session_cookie_lifetime', $cookieDefaults['lifetime']);
     $path     = $this->getParameter('session_cookie_path',     $cookieDefaults['path']);
