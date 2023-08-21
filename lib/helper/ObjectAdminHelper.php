@@ -113,7 +113,7 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
     $already_html = sprintf(
 	'<div style="float: left; margin-left: 5px;"><div style="font-weight: bold; padding-bottom: 0.5em">%s</div>%s</div>',
 	__(isset($options['already_label'])) ? $options['already_label']   : 'Already associated',
-	select_tag($name3, options_for_select(_get_options_from_objects($already_asigned_objects), '', $options), array_merge($options, array('disabled'=>'disabled')))
+	select_tag($name3, options_for_select(_get_options_from_objects($already_asigned_objects), '', $options), array_merge($options, array('readonly'=>'readonly')))
     );
   else
      $already_html ='';
