@@ -124,15 +124,15 @@ abstract class sfAdminGenerator extends sfCrudGenerator
     $action = isset($params['action']) ? $params['action'] : $default_action;
     $url_params = $pk_link ? '?'.$this->getPrimaryKeyUrlParams() : '\'';
 
-    if (!isset($options['class']))
+    if (!isset($params['class']))
     {
       $options['class'] = $default_class;
     }
     else
     {
        //Nos aseguramos que tenemos la clase btn
-      if (strpos(' btn ', ' ' . $options['class'] . ' ' )===false)
-        $options['class'] = "btn ${options['class']}";
+      if (strpos(' btn ', ' ' . $params['class'] . ' ' )===false)
+        $options['class'] = "btn ${params['class']}";
     }
 
     if (isset($params['icon']))
