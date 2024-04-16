@@ -73,4 +73,10 @@ class defaultActions extends sfActions
   public function executeDisabled()
   {
   }
+
+  public function executeRedirect()
+  {
+    $route = $this->getRequestParameter('route');
+    return $this->redirect($route);
+  }
 }
