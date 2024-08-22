@@ -204,7 +204,7 @@ abstract class sfAdminGenerator extends sfCrudGenerator
 
       if ($actionName == 'delete')
       {
-	$span_class='pull-right';
+        $span_class='pull-right';
         $options['post'] = true;
         $options['class']='btn btn-danger delete';
         if (!isset($options['confirm']))
@@ -229,10 +229,10 @@ abstract class sfAdminGenerator extends sfCrudGenerator
     // little hack
     $phpOptions = preg_replace("/'confirm' => '(.+?)(?<!\\\)'/", '\'confirm\' => __(\'$1\')', $phpOptions);
 
-    return '<span class="' . $span_class . '">[?php echo link_to(
-	__(\''.$name.'\'),
-	\''.$this->getModuleName().'/'.$action.$url_params.($options ? ', '.$phpOptions : '').') ?]
-	</span>'."\n";
+    return   '[?php if ('.$this->getPrimaryKeyIsSet().'): ?]<span class="' . $span_class . '">[?php echo link_to(
+        __(\''.$name.'\'),
+        \''.$this->getModuleName().'/'.$action.$url_params.($options ? ', '.$phpOptions : '').') ?]
+        </span>[?php endif; ?]'.PHP_EOL;
   }
 
   /**
