@@ -266,11 +266,11 @@ abstract class sfAdminGenerator extends sfCrudGenerator
     $type = $column->getCreoleType();
     if ($type == CreoleTypes::DATE)
     {
-      $params = array_merge(array('rich' => true, 'calendar_button_img' => sfConfig::get('sf_admin_web_dir').'/images/date.png'), $params);
+      $params = array_merge(array('rich' => true), $params);
     }
     else if ($type == CreoleTypes::TIMESTAMP)
     {
-      $params = array_merge(array('rich' => true, 'withtime' => true, 'calendar_button_img' => sfConfig::get('sf_admin_web_dir').'/images/date.png'), $params);
+      $params = array_merge(array('rich' => true, 'withtime' => true), $params);
     }
 
     // user sets a specific tag to use
@@ -643,13 +643,13 @@ EOF;
     else if ($type == CreoleTypes::DATE)
     {
       // rich=false not yet implemented
-      $params = $this->getObjectTagParams($params, array('rich' => true, 'calendar_button_img' => sfConfig::get('sf_admin_web_dir').'/images/date.png'));
+      $params = $this->getObjectTagParams($params, array('rich' => true ));
       return "input_date_range_tag($name, $default_value, $params)";
     }
     else if ($type == CreoleTypes::TIMESTAMP)
     {
       // rich=false not yet implemented
-      $params = $this->getObjectTagParams($params, array('rich' => true, 'withtime' => true, 'calendar_button_img' => sfConfig::get('sf_admin_web_dir').'/images/date.png'));
+      $params = $this->getObjectTagParams($params, array('rich' => true, 'withtime' => true));
       return "input_date_range_tag($name, $default_value, $params)";
     }
     else if ($type == CreoleTypes::BOOLEAN)

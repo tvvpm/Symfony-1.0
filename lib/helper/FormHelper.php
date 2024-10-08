@@ -631,7 +631,7 @@ function input_date_tag($name, $value = null, $options = array())
   $withTime = _get_option($options, 'withtime', false);
 
   // rich control?
-  if (!_get_option($options, 'rich', false))
+  if (!_get_option($options, 'rich', true))
   {
     use_helper('DateForm');
 
@@ -743,7 +743,7 @@ function input_date_tag($name, $value = null, $options = array())
 	'type'=>'button',
 	'disabled'=>'disabled',
 	'onclick'=>'return false',
-	'class'=>_get_option($options, 'class_button')??'btn',
+	'class'=>_get_option($options, 'class_button')??'btn btn-calendar',
 	'id'=>$id_calendarButton
     );
 
