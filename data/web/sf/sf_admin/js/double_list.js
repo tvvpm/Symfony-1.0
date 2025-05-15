@@ -30,7 +30,7 @@ function double_list_submit(form_name)
     element = form.elements[i];
     if (element.type == 'select-multiple')
     {
-      if (element.className == 'sf_admin_multiple-selected')
+      if (element.classList.contains('sf_admin_multiple-selected'))
       {
         element.removeAttribute('disabled')
         for (var j = 0; j < element.options.length; j++)

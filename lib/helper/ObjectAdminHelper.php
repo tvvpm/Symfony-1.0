@@ -52,7 +52,11 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
 {
   $options = _parse_attributes($options);
   $options['multiple']=true;
-  $options['class']='sf_admin_multiple';
+  if (!isset($options['class']))
+     $options['class']='sf_admin_multiple';
+  else
+     $options['class'] .= ' sf_admin_multiple';
+
   if (!isset($options['size']))
   {
     $options['size'] = 10;
@@ -102,11 +106,16 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
   // override field name
   unset($options['control_name']);
 
-  $name1 = 'unassociated_'.$name;
-  $name2 = 'associated_'.$name;
-  $name3 = 'associated_already_'.$name;
+  $name1 = 'unassociated_'.$name; $name1_id = get_id_from_name($name1);
+  $name2 = 'associated_'.$name; $name2_id = get_id_from_name($name2);
+  $name3 = 'associated_already_'.$name; $name3_id = get_id_from_name($name3);
+
   $select1 = select_tag($name1, options_for_select(_get_options_from_objects($objects_unassociated), '', $options), $options);
-  $options['class'] = 'sf_admin_multiple-selected';
+  if (!isset($options['class']))
+     $options['class']='sf_admin_multiple-selected';
+  else
+     $options['class'] .= ' sf_admin_multiple-selected';
+
   $select2 = select_tag($name2, options_for_select(_get_options_from_objects($objects_associated), '', $options), $options);
 
   if (count($already_asigned_objects)>0)
@@ -137,11 +146,11 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
 </div>
 <script>
 <!--
-	jQuery("#'.$name1.'").dblclick(function() {
-		double_list_move("'. $name1 . '", "'. $name2 . '");
+	jQuery("#'.$name1_id.'").dblclick(function() {
+		double_list_move("'. $name1_id . '", "'. $name2_id . '");
 	});
-	jQuery("#'.$name2.'").dblclick(function() {
-		double_list_move("'. $name2 . '", "'. $name1 . '");
+	jQuery("#'.$name2_id.'").dblclick(function() {
+		double_list_move("'. $name2_id . '", "'. $name1_id . '");
 	});
 -->
 </script>
@@ -153,8 +162,8 @@ function admin_double_list($name, $options, $custom_objects=array(), $objects_as
   return sprintf($html,
     $label_all,
     $select1,
-    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/next.png', "style=\"border: 0\" onclick=\"double_list_move('{$name1}', '{$name2}'); return false;\""),
-    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/previous.png', "style=\"border: 0\" onclick=\"double_list_move('{$name2}', '{$name1}'); return false;\""),
+    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/next.png', "style=\"border: 0\" onclick=\"double_list_move('{$name1_id}', '{$name2_id}'); return false;\""),
+    submit_image_tag(sfConfig::get('sf_admin_web_dir').'/images/previous.png', "style=\"border: 0\" onclick=\"double_list_move('{$name2_id}', '{$name1_id}'); return false;\""),
     $label_assoc,
     $select2,
     $already_html
@@ -178,13 +187,30 @@ function object_admin_double_list($object, $method, $options = array(), $callbac
 
   // get the lists of objects
   list($all_objects, $objects_associated, $associated_ids) = _get_object_list($object, $method, $options, $callback);
-  
+
   $objects_unassociated = array();
-  foreach ($all_objects as $object)
+
+  if (isset($options['associated_ids']))
   {
-    if (!in_array($object->getPrimaryKey(), $associated_ids))
+    foreach ($all_objects as $object)
     {
-      $objects_unassociated[] = $object;
+      if (!in_array($object->getPrimaryKey(), $options['associated_ids']))
+      {
+        $objects_associated[] = $object;
+        $associated_ids[] = $object->getPrimaryKey();
+      }
+      else
+        $objects_unassociated[] = $object;
+    }
+  }
+  else
+  {
+    foreach ($all_objects as $object)
+    {
+      if (!in_array($object->getPrimaryKey(), $associated_ids))
+      {
+        $objects_unassociated[] = $object;
+      }
     }
   }
 
